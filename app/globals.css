@@ -1,26 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html.lenis {
+  height: auto;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  cursor: none;
+  overflow-x: hidden;
+  background-color: #050505;
+  color: white;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* Dark/Light Mode Classes handled by GSAP */
+.theme-light {
+  background-color: #e4e4e7; /* Zinc-200 */
+  color: #050505;
+}
+
+.theme-light .text-stroke {
+  -webkit-text-stroke: 1px rgba(0,0,0,0.2);
+}
+
+.theme-light .group:hover .text-stroke {
+  color: #050505;
+}
+
+.theme-light .border-white\/20 {
+  border-color: rgba(0,0,0,0.1);
+}
+
+.theme-light .border-white {
+  border-color: #050505;
+}
+
+.theme-light .hover\:bg-white:hover {
+  background-color: #050505;
+  color: white;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050505; 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #444; 
+  border-radius: 2px;
+}
+
+/* Typography Utilities */
+.text-stroke {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+  color: transparent;
+  transition: 0.3s ease;
+}
+
+.group:hover .text-stroke {
+  -webkit-text-stroke: 0px;
+  color: white;
+}
+
+/* Grain Overlay */
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* Custom Cursor */
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: currentColor;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 10000;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.cursor-outline {
+  width: 40px;
+  height: 40px;
+  border: 1px solid currentColor;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 9999;
+  pointer-events: none;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+  mix-blend-mode: difference;
+  opacity: 0.5;
+}
+
+body.hovering .cursor-outline {
+  width: 70px;
+  height: 70px;
+  background-color: white;
+  border-color: transparent;
+  opacity: 1;
+}
+
+/* 3D Card Tilt Styles */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+}
+
+.tilt-content {
+  transform: translateZ(20px);
+}
+
+/* Preloader */
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 20000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: 'Space Mono', monospace;
+}
+
+/* Skew Effect Container */
+.skew-container {
+  width: 100%;
+}
+
+/* Spotlight Overlay */
+.spotlight-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.06), transparent 40%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tilt-card:hover .spotlight-overlay {
+  opacity: 1;
+}
+
+/* SVG Liquid Filter Application */
+.liquid-img {
+  filter: url(#liquid);
+  transition: transform 0.7s ease-out;
+}
+
+/* Floating Particles Animation */
+.particle {
+  animation: float 6s ease-in-out infinite;
+  animation-delay: calc(var(--i, 0) * 0.5s);
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) scale(1.2);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-40px) translateX(-10px) scale(0.8);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translateY(-20px) translateX(5px) scale(1.1);
+    opacity: 0.35;
+  }
+}
+
+/* Scroll Progress Bar */
+.scroll-progress-bar {
+  will-change: transform;
+}
+
+/* Enhanced Text Animations */
+.char {
+  will-change: transform, opacity;
+}
+
+/* Smooth Transitions for GSAP Animations */
+.tilt-card,
+.value-item,
+.footer-section,
+.work-title,
+.values-title,
+.footer-title {
+  will-change: transform, opacity;
+}
+
+/* Mobile Menu Responsive Styles */
+@media (max-width: 768px) {
+  #menuOverlay {
+    padding-top: 4rem;
+  }
+  
+  .menu-link {
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
+  }
+  
+  /* Ensure menu content doesn't get cut off */
+  #menuOverlay nav {
+    padding-bottom: 2rem;
+  }
+}
+
+/* Prevent body scroll when menu is open */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
+
+/* SplitType Text Animations */
+.split-heading .char {
+  display: inline-block;
+  opacity: 0;
 }
