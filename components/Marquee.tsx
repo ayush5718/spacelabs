@@ -45,45 +45,59 @@ export default function Marquee() {
       });
     });
 
+    // Get the width of the first marquee content block
+    const firstContent = marquee.querySelector('.marquee-content') as HTMLElement;
+    if (!firstContent) return;
+    
+    const contentWidth = firstContent.offsetWidth;
+    
+    // Create seamless infinite loop animation
     const animation = gsap.to(marquee, {
-      xPercent: -50,
-      repeat: -1,
-      duration: 20,
-      ease: "linear"
+      x: -contentWidth,
+      duration: 15,
+      ease: "none",
+      repeat: -1
     });
 
-    ScrollTrigger.create({
+    // Velocity-based speed adjustment for scroll
+    const scrollTrigger = ScrollTrigger.create({
       trigger: "body",
       start: "top top",
       end: "bottom bottom",
       onUpdate: (self) => {
         const velocity = Math.abs(self.getVelocity());
-        const timeScale = 1 + (velocity / 100);
-        animation.timeScale(timeScale);
+        const timeScale = 1 + (velocity / 300);
+        animation.timeScale(Math.max(0.8, Math.min(1.5, timeScale)));
       }
     });
 
     return () => {
       animation.kill();
+      scrollTrigger?.kill();
     };
   }, []);
 
+  const marqueeItems = [
+    <span key="1">Strategy</span>,
+    <span key="2" className="text-stroke">Branding</span>,
+    <span key="3">Digital</span>,
+    <span key="4" className="text-stroke">Content</span>,
+    <span key="5">Motion</span>,
+  ];
+
   return (
     <section className="border-y border-white/10 bg-boulder-gray py-12 relative z-20 overflow-hidden" data-theme="dark">
-      <div ref={marqueeRef} className="marquee-wrapper flex overflow-hidden whitespace-nowrap -rotate-1 scale-105">
-        <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
-          <span>Strategy</span>
-          <span className="text-stroke">Branding</span>
-          <span>Digital</span>
-          <span className="text-stroke">Content</span>
-          <span>Motion</span>
-        </div>
-        <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
-          <span>Strategy</span>
-          <span className="text-stroke">Branding</span>
-          <span>Digital</span>
-          <span className="text-stroke">Content</span>
-          <span>Motion</span>
+      <div className="marquee-container overflow-hidden -rotate-1 scale-105">
+        <div ref={marqueeRef} className="marquee-wrapper flex whitespace-nowrap will-change-transform">
+          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+            {marqueeItems}
+          </div>
+          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+            {marqueeItems}
+          </div>
+          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+            {marqueeItems}
+          </div>
         </div>
       </div>
     </section>
