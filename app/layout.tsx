@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "SpaceLab Creative Studios - Science + Tech Brands",
+  title: "SpaceLabs Creative Studios - Science + Tech Brands",
   description: "The Creative Studio for Science + Tech Brands. Making the Complex Compelling.",
+  icons: {
+    icon: '/icon.svg',
+  },
 };
 
 export default function RootLayout({
