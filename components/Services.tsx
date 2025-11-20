@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -35,6 +35,18 @@ const services: Service[] = [
 
 export default function Services() {
   const revealImgRef = useRef<HTMLImageElement>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024 || 'ontouchstart' in window);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -69,67 +81,79 @@ export default function Services() {
       });
     });
 
-    // Hover reveal image effect
-    const revealImg = revealImgRef.current;
-    if (!revealImg) return;
+    // Desktop hover reveal image effect (only on non-mobile)
+    if (!isMobile) {
+      const revealImg = revealImgRef.current;
+      if (!revealImg) return;
 
-    const cleanupFunctions: (() => void)[] = [];
+      const cleanupFunctions: (() => void)[] = [];
 
-    serviceItems.forEach((item) => {
-      const handleMouseEnter = (e: Event) => {
-        const imgUrl = item.getAttribute('data-img');
-        if (imgUrl && revealImg) {
-          revealImg.src = imgUrl;
-          gsap.to(revealImg, {
-            opacity: 1,
-            scale: 1,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        }
-      };
+      serviceItems.forEach((item) => {
+        const handleMouseEnter = (e: Event) => {
+          const imgUrl = item.getAttribute('data-img');
+          if (imgUrl && revealImg) {
+            revealImg.src = imgUrl;
+            gsap.to(revealImg, {
+              opacity: 1,
+              scale: 1,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          }
+        };
 
-      const handleMouseLeave = () => {
-        if (revealImg) {
-          gsap.to(revealImg, {
-            opacity: 0,
-            scale: 0.8,
-            duration: 0.3,
-            ease: "power2.out"
-          });
-        }
-      };
+        const handleMouseLeave = () => {
+          if (revealImg) {
+            gsap.to(revealImg, {
+              opacity: 0,
+              scale: 0.8,
+              duration: 0.3,
+              ease: "power2.out"
+            });
+          }
+        };
 
-      const handleMouseMove = (e: Event) => {
-        const mouseEvent = e as MouseEvent;
-        if (revealImg) {
-          const x = mouseEvent.clientX;
-          const y = mouseEvent.clientY;
-          gsap.to(revealImg, {
-            left: x,
-            top: y,
-            duration: 0.5,
-            ease: "power2.out"
-          });
-        }
-      };
+        const handleMouseMove = (e: Event) => {
+          const mouseEvent = e as MouseEvent;
+          if (revealImg) {
+            const x = mouseEvent.clientX;
+            const y = mouseEvent.clientY;
+            gsap.to(revealImg, {
+              left: x,
+              top: y,
+              duration: 0.5,
+              ease: "power2.out"
+            });
+          }
+        };
 
-      item.addEventListener('mouseenter', handleMouseEnter as EventListener);
-      item.addEventListener('mouseleave', handleMouseLeave);
-      item.addEventListener('mousemove', handleMouseMove as EventListener);
+        item.addEventListener('mouseenter', handleMouseEnter as EventListener);
+        item.addEventListener('mouseleave', handleMouseLeave);
+        item.addEventListener('mousemove', handleMouseMove as EventListener);
 
-      cleanupFunctions.push(() => {
-        item.removeEventListener('mouseenter', handleMouseEnter as EventListener);
-        item.removeEventListener('mouseleave', handleMouseLeave);
-        item.removeEventListener('mousemove', handleMouseMove as EventListener);
+        cleanupFunctions.push(() => {
+          item.removeEventListener('mouseenter', handleMouseEnter as EventListener);
+          item.removeEventListener('mouseleave', handleMouseLeave);
+          item.removeEventListener('mousemove', handleMouseMove as EventListener);
+        });
       });
-    });
+
+      return () => {
+        cleanupFunctions.forEach(cleanup => cleanup());
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      };
+    }
 
     return () => {
-      cleanupFunctions.forEach(cleanup => cleanup());
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, []);
+  }, [isMobile]);
+
+  const handleServiceClick = (index: number) => {
+    if (isMobile) {
+      setExpandedIndex(expandedIndex === index ? null : index);
+    }
+  };
 
   return (
     <section id="services" className="relative bg-white text-black py-32 px-4 md:px-10" data-theme="light">
@@ -154,6 +178,7 @@ export default function Services() {
                 key={index}
                 className="service-item group py-12 border-b border-black/10 hover:border-black/100 transition-colors cursor-none relative"
                 data-img={service.image}
+                onClick={() => handleServiceClick(index)}
               >
                 <div className="flex justify-between items-center hover-trigger">
                   <h4 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter group-hover:translate-x-4 transition-transform duration-300">
@@ -166,34 +191,54 @@ export default function Services() {
                 <p className="mt-4 text-gray-500 max-w-md group-hover:text-black transition-colors">
                   {service.description}
                 </p>
+                
+                {/* Mobile: Inline expandable image */}
+                {isMobile && (
+                  <div 
+                    className={`service-mobile-image overflow-hidden transition-all duration-500 ease-out ${
+                      expandedIndex === index ? 'max-h-[500px] mt-6 opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden">
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Reveal Image Container */}
-      <img
-        ref={revealImgRef}
-        id="service-reveal-img"
-        className="reveal-img"
-        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-        alt="Service Preview"
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%) scale(0.8)',
-          width: '400px',
-          height: '500px',
-          objectFit: 'cover',
-          opacity: 0,
-          pointerEvents: 'none',
-          zIndex: 5,
-          borderRadius: '8px',
-          filter: 'brightness(0.8) contrast(1.2)'
-        }}
-      />
+      {/* Desktop: Reveal Image Container (hidden on mobile) */}
+      {!isMobile && (
+        <img
+          ref={revealImgRef}
+          id="service-reveal-img"
+          className="reveal-img hidden lg:block"
+          src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          alt="Service Preview"
+          style={{
+            position: 'fixed',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%) scale(0.8)',
+            width: '400px',
+            height: '500px',
+            objectFit: 'cover',
+            opacity: 0,
+            pointerEvents: 'none',
+            zIndex: 5,
+            borderRadius: '8px',
+            filter: 'brightness(0.8) contrast(1.2)'
+          }}
+        />
+      )}
     </section>
   );
 }
