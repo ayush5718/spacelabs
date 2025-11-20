@@ -1,14 +1,44 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
+    // Detect mobile
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 1024 || 'ontouchstart' in window;
+      setIsMobile(mobile);
+      return mobile;
+    };
+    
+    const mobile = checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     gsap.registerPlugin(ScrollTrigger);
 
+    // On mobile, use native scroll for better compatibility
+    if (mobile) {
+      // Refresh ScrollTrigger on mobile to ensure it works
+      ScrollTrigger.refresh();
+      
+      // Force refresh on scroll for mobile
+      const handleScroll = () => {
+        ScrollTrigger.update();
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      
+      return () => {
+        window.removeEventListener('resize', checkMobile);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+
+    // Desktop: Use Lenis smooth scroll
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -39,6 +69,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       cancelAnimationFrame(rafId);
       gsap.ticker.remove(ticker);
       lenis.destroy();
+      window.removeEventListener('resize', checkMobile);
     };
   }, []);
 

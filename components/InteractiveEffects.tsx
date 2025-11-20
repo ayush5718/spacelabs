@@ -5,6 +5,10 @@ import { gsap } from 'gsap';
 
 export default function InteractiveEffects() {
   useEffect(() => {
+    // Check if device has fine pointer (desktop)
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return; // Don't initialize magnetic effects on touch devices
+
     // Magnetic Buttons
     const magnetics = document.querySelectorAll('.magnetic');
     const magneticCleanups: (() => void)[] = [];

@@ -5,9 +5,17 @@ import { gsap } from 'gsap';
 
 export default function CustomCursor() {
   useEffect(() => {
+    // Check if device has fine pointer (desktop)
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    if (isTouch) return; // Don't initialize cursor on touch devices
+
     const cursorDot = document.querySelector('.cursor-dot');
     const cursorOutline = document.querySelector('.cursor-outline');
     const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+    // Show cursor elements
+    if (cursorDot) (cursorDot as HTMLElement).style.display = 'block';
+    if (cursorOutline) (cursorOutline as HTMLElement).style.display = 'block';
 
     const handleMouseMove = (e: MouseEvent) => {
       const posX = e.clientX;

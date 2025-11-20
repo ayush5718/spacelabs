@@ -12,6 +12,15 @@ export default function Preloader() {
     const counter = counterRef.current;
     if (!preloader || !counter) return;
 
+    // Prevent scrolling during preloader
+    document.body.classList.add('preloader-active');
+    document.documentElement.classList.add('preloader-active');
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    document.documentElement.style.overflow = 'hidden';
+
     let count = 0;
 
     const updateCounter = () => {
@@ -33,6 +42,14 @@ export default function Preloader() {
             if (preloader) {
               preloader.style.display = 'none';
             }
+            // Re-enable scrolling after preloader
+            document.body.classList.remove('preloader-active');
+            document.documentElement.classList.remove('preloader-active');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
+            document.documentElement.style.overflow = '';
             // Dispatch custom event to signal preloader is done
             window.dispatchEvent(new Event('preloader-complete'));
           }
@@ -41,6 +58,17 @@ export default function Preloader() {
     };
 
     requestAnimationFrame(updateCounter);
+
+    // Cleanup function
+    return () => {
+      document.body.classList.remove('preloader-active');
+      document.documentElement.classList.remove('preloader-active');
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.documentElement.style.overflow = '';
+    };
   }, []);
 
   return (

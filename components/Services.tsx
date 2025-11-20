@@ -51,35 +51,67 @@ export default function Services() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
+    const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
+
     // Animate section on scroll
-    gsap.from('.services-title', {
-      opacity: 0,
-      y: 80,
-      duration: 1.5,
-      ease: "power4.out",
-      scrollTrigger: {
-        trigger: '#services',
-        start: "top 80%",
-        toggleActions: "play none none reverse"
+    const servicesTitle = document.querySelector('.services-title');
+    if (servicesTitle) {
+      gsap.from(servicesTitle, {
+        opacity: 0,
+        y: isMobile ? 30 : 80,
+        duration: isMobile ? 0.8 : 1.5,
+        ease: "power4.out",
+        scrollTrigger: {
+          trigger: '#services',
+          start: isMobile ? "top 90%" : "top 80%",
+          toggleActions: "play none none reverse",
+          once: true
+        },
+        onComplete: () => {
+          if (isMobile) gsap.set(servicesTitle, { opacity: 1, y: 0 });
+        }
+      });
+
+      // Mobile fallback
+      if (isMobile) {
+        setTimeout(() => {
+          gsap.set(servicesTitle, { opacity: 1, y: 0 });
+        }, 1500);
       }
-    });
+    }
 
     // Service items animation
     const serviceItems = document.querySelectorAll('.service-item');
     serviceItems.forEach((item, i) => {
       gsap.from(item, {
         opacity: 0,
-        x: -50,
-        duration: 1,
-        delay: i * 0.15,
+        x: isMobile ? -20 : -50,
+        duration: isMobile ? 0.6 : 1,
+        delay: i * 0.1,
         ease: "power3.out",
         scrollTrigger: {
           trigger: item,
-          start: "top 85%",
-          toggleActions: "play none none reverse"
+          start: isMobile ? "top 90%" : "top 85%",
+          toggleActions: "play none none reverse",
+          once: true
+        },
+        onComplete: () => {
+          if (isMobile) gsap.set(item, { opacity: 1, x: 0 });
         }
       });
+
+      // Mobile fallback
+      if (isMobile) {
+        setTimeout(() => {
+          gsap.set(item, { opacity: 1, x: 0 });
+        }, 2000 + i * 200);
+      }
     });
+
+    // Refresh ScrollTrigger on mobile
+    if (isMobile) {
+      setTimeout(() => ScrollTrigger.refresh(), 300);
+    }
 
     // Desktop hover reveal image effect (only on non-mobile)
     if (!isMobile) {
@@ -156,17 +188,17 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="relative bg-white text-black py-32 px-4 md:px-10" data-theme="light">
+    <section id="services" className="relative bg-white text-black py-20 md:py-32 px-4 md:px-10" data-theme="light">
       <div className="max-w-[1920px] mx-auto">
         <div className="services-container grid grid-cols-1 lg:grid-cols-12 gap-12">
           {/* Sticky Sidebar */}
           <div className="lg:col-span-4 h-fit lg:sticky lg:top-32">
-            <h2 className="text-sm font-mono uppercase tracking-widest mb-4 text-gray-500">[ 02. Services ]</h2>
-            <h3 className="services-title split-heading text-5xl md:text-7xl font-bold uppercase tracking-tighter mb-8">
+            <h2 className="text-xs md:text-sm font-mono uppercase tracking-widest mb-4 text-gray-500">[ 02. Services ]</h2>
+            <h3 className="services-title split-heading text-4xl md:text-7xl font-bold uppercase tracking-tighter mb-6 md:mb-8">
               Our<br />
               Expertise
             </h3>
-            <p className="text-lg text-gray-600 max-w-xs">
+            <p className="text-base md:text-lg text-gray-600 max-w-xs">
               We combine PhD-level knowledge with world-class creative execution to solve complex problems.
             </p>
           </div>
@@ -176,19 +208,19 @@ export default function Services() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="service-item group py-12 border-b border-black/10 hover:border-black/100 transition-colors cursor-none relative"
+                className="service-item group py-8 md:py-12 border-b border-black/10 hover:border-black/100 transition-colors cursor-none relative"
                 data-img={service.image}
                 onClick={() => handleServiceClick(index)}
               >
                 <div className="flex justify-between items-center hover-trigger">
-                  <h4 className="text-4xl md:text-6xl font-bold uppercase tracking-tighter group-hover:translate-x-4 transition-transform duration-300">
+                  <h4 className="text-2xl md:text-6xl font-bold uppercase tracking-tighter group-hover:translate-x-4 transition-transform duration-300">
                     {service.title}
                   </h4>
-                  <span className="text-4xl group-hover:rotate-45 transition-transform duration-300">
+                  <span className="text-2xl md:text-4xl group-hover:rotate-45 transition-transform duration-300">
                     <span className="font-mono">&#8599;</span>
                   </span>
                 </div>
-                <p className="mt-4 text-gray-500 max-w-md group-hover:text-black transition-colors">
+                <p className="mt-4 text-sm md:text-base text-gray-500 max-w-md group-hover:text-black transition-colors">
                   {service.description}
                 </p>
                 

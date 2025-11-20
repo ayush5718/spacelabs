@@ -86,16 +86,16 @@ export default function Marquee() {
   ];
 
   return (
-    <section className="border-y border-white/10 bg-boulder-gray py-12 relative z-20 overflow-hidden" data-theme="dark">
+    <section className="border-y border-white/10 bg-boulder-gray py-8 md:py-12 relative z-20 overflow-hidden" data-theme="dark">
       <div className="marquee-container overflow-hidden -rotate-1 scale-105">
         <div ref={marqueeRef} className="marquee-wrapper flex whitespace-nowrap will-change-transform">
-          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+          <div className="marquee-content flex items-center gap-12 md:gap-20 text-4xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-12 md:pr-20">
             {marqueeItems}
           </div>
-          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+          <div className="marquee-content flex items-center gap-12 md:gap-20 text-4xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-12 md:pr-20">
             {marqueeItems}
           </div>
-          <div className="marquee-content flex items-center gap-20 text-5xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-20">
+          <div className="marquee-content flex items-center gap-12 md:gap-20 text-4xl md:text-8xl font-bold uppercase tracking-tighter text-white/80 pr-12 md:pr-20">
             {marqueeItems}
           </div>
         </div>
