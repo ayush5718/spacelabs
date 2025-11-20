@@ -94,8 +94,8 @@ export default function Footer() {
 
           <div className="opacity-60 hover:opacity-100 transition-opacity duration-500">
             <h4 className="font-bold uppercase mb-6 text-sm tracking-widest">Contact</h4>
-            <a href="mailto:hello@spacelab.studio" className="magnetic hover-trigger block text-gray-400 text-sm hover:text-white mb-2 font-mono w-fit">
-              hello@spacelab.studio
+            <a href="mailto:aayush.designbyte@gmail.com" className="magnetic hover-trigger block text-gray-400 text-sm hover:text-white mb-2 font-mono w-fit">
+              aayush.designbyte@gmail.com
             </a>
             <a href="tel:+4402070000000" className="magnetic hover-trigger block text-gray-400 text-sm hover:text-white font-mono w-fit">
               +44 (0) 20 7000 0000
@@ -110,11 +110,34 @@ export default function Footer() {
               <a href="#" className="magnetic hover-trigger text-gray-400 text-sm hover:text-white w-fit">LinkedIn</a>
             </div>
           </div>
+
+          <div className="footer-section opacity-60 hover:opacity-100 transition-opacity duration-500">
+            <h4 className="font-bold uppercase mb-6 text-sm tracking-widest">Built By</h4>
+            <div className="flex flex-col gap-3 font-mono">
+              <a 
+                href="https://github.com/ayush5718" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="magnetic hover-trigger text-gray-400 text-sm hover:text-white w-fit"
+              >
+                GitHub
+              </a>
+              <a 
+                href="https://instagram.com/ayushbhardwaj.2602" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="magnetic hover-trigger text-gray-400 text-sm hover:text-white w-fit"
+              >
+                Instagram
+              </a>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-32 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between text-xs text-gray-600 uppercase tracking-widest font-mono">
+        <div className="mt-32 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-xs text-gray-600 uppercase tracking-widest font-mono">
           <p>&copy; 2024 SpaceLab Group. All Rights Reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
+          <div className="flex items-center gap-6 mt-4 md:mt-0">
+            <span className="text-gray-500 lowercase">Built by <a href="https://github.com/ayush5718" target="_blank" rel="noopener noreferrer" className="hover-trigger hover:text-white">aayush</a></span>
             <a href="#" className="hover-trigger hover:text-white">Privacy Policy</a>
             <a href="#" className="hover-trigger hover:text-white">Cookies</a>
           </div>
