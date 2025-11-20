@@ -343,6 +343,18 @@ body.menu-open {
     opacity: 1 !important;
     transform: none !important;
   }
+
+  /* Ensure split-chars (Science + Technology) is visible on mobile */
+  .split-chars {
+    opacity: 1 !important;
+    transform: none !important;
+    display: inline !important;
+  }
+
+  .split-chars .char {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
 
 /* Prevent horizontal overflow */

@@ -49,33 +49,43 @@ export default function Hero() {
       }, "-=2");
     };
 
-    // Split text into characters for advanced animation
-    const splitTextElements = document.querySelectorAll('.split-chars');
-    splitTextElements.forEach((element) => {
-      const text = element.textContent || '';
-      const chars = text.split('').map(char => 
-        char === ' ' ? '\u00A0' : char
-      );
-      element.innerHTML = chars.map(char => 
-        `<span class="char" style="display: inline-block;">${char}</span>`
-      ).join('');
-    });
-
-    // Animate characters on scroll
-    gsap.utils.toArray('.char').forEach((char: any, i) => {
-      gsap.from(char, {
-        opacity: 0,
-        y: 50,
-        rotationX: -90,
-        duration: 0.5,
-        delay: i * 0.02,
-        scrollTrigger: {
-          trigger: char,
-          start: "top 80%",
-          toggleActions: "play none none reverse"
-        }
+    // Split text into characters for advanced animation (desktop only)
+    const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
+    if (!isMobile) {
+      const splitTextElements = document.querySelectorAll('.split-chars');
+      splitTextElements.forEach((element) => {
+        const text = element.textContent || '';
+        const chars = text.split('').map(char => 
+          char === ' ' ? '\u00A0' : char
+        );
+        element.innerHTML = chars.map(char => 
+          `<span class="char" style="display: inline-block;">${char}</span>`
+        ).join('');
       });
-    });
+
+      // Animate characters on scroll (desktop only)
+      gsap.utils.toArray('.char').forEach((char: any, i) => {
+        gsap.from(char, {
+          opacity: 0,
+          y: 50,
+          rotationX: -90,
+          duration: 0.5,
+          delay: i * 0.02,
+          scrollTrigger: {
+            trigger: char,
+            start: "top 80%",
+            toggleActions: "play none none reverse"
+          }
+        });
+      });
+    } else {
+      // On mobile, ensure split-chars text is immediately visible
+      const splitChars = document.querySelectorAll('.split-chars');
+      splitChars.forEach((el) => {
+        (el as HTMLElement).style.opacity = '1';
+        (el as HTMLElement).style.transform = 'none';
+      });
+    }
 
     window.addEventListener('preloader-complete', handlePreloaderComplete);
     
@@ -86,7 +96,6 @@ export default function Hero() {
     }
 
     // Mobile fallback: ensure content is visible even if animations don't run
-    const isMobile = window.innerWidth < 1024 || 'ontouchstart' in window;
     if (isMobile) {
       // Immediately reset transforms on mobile to prevent tilted state
       // Use requestAnimationFrame to ensure DOM is ready
@@ -107,10 +116,20 @@ export default function Hero() {
           });
         });
 
-        // Also ensure split-chars are visible
+        // Ensure split-chars are immediately visible on mobile (no animation)
         const splitChars = document.querySelectorAll('.split-chars');
         splitChars.forEach((el) => {
-          gsap.set(el, { opacity: 1 });
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.transform = 'none';
+          (el as HTMLElement).style.display = 'inline';
+          gsap.set(el, { opacity: 1, transform: 'none' });
+        });
+
+        // Ensure fade-in elements are visible
+        const fadeIns = document.querySelectorAll('.fade-in');
+        fadeIns.forEach((el) => {
+          (el as HTMLElement).style.opacity = '1';
+          gsap.set(el, { opacity: 1, y: 0, scale: 1 });
         });
       });
 
@@ -129,6 +148,13 @@ export default function Hero() {
             transformStyle: 'flat'
           });
         });
+        
+        const splitChars = document.querySelectorAll('.split-chars');
+        splitChars.forEach((el) => {
+          (el as HTMLElement).style.opacity = '1';
+          (el as HTMLElement).style.transform = 'none';
+        });
+        
         const fadeIns = document.querySelectorAll('.fade-in');
         fadeIns.forEach((el) => {
           gsap.set(el, { opacity: 1, y: 0, scale: 1 });
